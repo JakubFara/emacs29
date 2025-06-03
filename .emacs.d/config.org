@@ -177,6 +177,18 @@
   "ot"  '(my/open-vterm-below :which-key "terminal")
 
   "q"   '(:ignore t :which-key "quit")
-  "qq"  '(save-buffers-kill-terminal :which-key "quit emacs"))
+  "qq"  '(save-buffers-kill-terminal :which-key "quit emacs")
+    ;; Buffer management
+  "b"   '(:ignore t :which-key "buffers")
+  "bb"  '(switch-to-buffer :which-key "switch buffer")
+  "bk"  '(kill-this-buffer :which-key "kill buffer")
+  "bd"  '(kill-buffer :which-key "delete buffer")
+  "bn"  '(next-buffer :which-key "next buffer")
+  "bp"  '(previous-buffer :which-key "previous buffer")
+  "br"  '(rename-buffer :which-key "rename buffer")
+  "bs"  '(save-buffer :which-key "save buffer")
+  "bl"  '(list-buffers :which-key "list buffers")
+  "bx"  '(kill-buffer-and-window :which-key "kill buffer & window")
+  )
 #+END_SRC
 

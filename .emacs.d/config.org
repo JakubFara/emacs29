@@ -133,6 +133,12 @@
 (require 'general)
 #+END_SRC
 
+* Org
+#+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'org)
+  (package-install 'org))
+(require 'org)
+#+END_SRC
 * Doom-style Leader Key
 #+BEGIN_SRC emacs-lisp
 ;; Ensure required packages are loaded
@@ -173,3 +179,4 @@
   "q"   '(:ignore t :which-key "quit")
   "qq"  '(save-buffers-kill-terminal :which-key "quit emacs"))
 #+END_SRC
+

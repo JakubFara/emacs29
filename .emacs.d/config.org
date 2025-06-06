@@ -185,61 +185,60 @@
 
 * My Keybindings
 #+BEGIN_SRC emacs-lisp
-;; Ensure required packages are loaded
-(require 'general)
-(require 'which-key)
-(which-key-mode)
-
-;; Define the leader key using general
-(general-create-definer my/leader-keys
-  :keymaps '(normal insert visual emacs) ;; Modes to activate in
-  :prefix "SPC"
-  :global-prefix "C-SPC") ;; C-SPC works even outside evil mode
-
-;; Now use that definer
-(my/leader-keys
-  "f"   '(:ignore t :which-key "files")
-  "ff"  '(find-file :which-key "find file")
-  "fs"  '(save-buffer :which-key "save file")
-
-  "b"   '(:ignore t :which-key "buffers")
-  "bb"  '(switch-to-buffer :which-key "switch buffer")
-  "bk"  '(kill-this-buffer :which-key "kill buffer")
-
-  "w"   '(:ignore t :which-key "windows")
-  "ws"  '(split-window-below :which-key "split below")
-  "wv"  '(split-window-right :which-key "split right")
-  "wd"  '(delete-window :which-key "delete window")
-  "wo"  '(delete-other-windows :which-key "only this window")
-  "wm"  '(delete-other-windows :which-key "maximize window")
-  "wc"  '(delete-window :which-key "close window")
-  "wh"  '(windmove-left :which-key "← window")
-  "wj"  '(windmove-down :which-key "↓ window")
-  "wk"  '(windmove-up :which-key "↑ window")
-  "wl"  '(windmove-right :which-key "→ window")
-
-  "ot"  '(my/open-vterm-below :which-key "terminal")
-
-  "q"   '(:ignore t :which-key "quit")
-  "qq"  '(save-buffers-kill-terminal :which-key "quit emacs")
-    ;; Buffer management
-  "b"   '(:ignore t :which-key "buffers")
-  "bb"  '(switch-to-buffer :which-key "switch buffer")
-  "bk"  '(kill-this-buffer :which-key "kill buffer")
-  "bd"  '(kill-buffer :which-key "delete buffer")
-  "bn"  '(next-buffer :which-key "next buffer")
-  "bp"  '(previous-buffer :which-key "previous buffer")
-  "br"  '(rename-buffer :which-key "rename buffer")
-  "bs"  '(save-buffer :which-key "save buffer")
-  "bl"  '(list-buffers :which-key "list buffers")
-  "bx"  '(kill-buffer-and-window :which-key "kill buffer & window")
-  )
   (global-set-key (kbd "C-/") 'comment-line)
   (global-set-key (kbd "C-=") 'text-scale-increase)
   (global-set-key (kbd "C-+") 'text-scale-increase)
   (global-set-key (kbd "C--") 'text-scale-decrease)
 #+END_SRC
 
+* Doom-style Leader Key
+#+BEGIN_SRC emacs-lisp
+  ;; Ensure required packages are loaded
+  ;; Ensure required packages are loaded
+  (require 'general)
+  (require 'which-key)
+  (which-key-mode)
+
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "C-u") 'evil-scroll-up)
+    (define-key evil-visual-state-map (kbd "C-u") 'evil-scroll-up))
+
+  ;; Define the leader key using general
+  (general-create-definer my/leader-keys
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+
+  (my/leader-keys
+    ;; Files
+    "f"   '(:ignore t :which-key "files")
+    "ff"  '(find-file :which-key "find file")
+    "fs"  '(save-buffer :which-key "save file")
+
+    ;; Buffers
+    "b"   '(:ignore t :which-key "buffers")
+    "bb"  '(switch-to-buffer :which-key "switch buffer")
+    "bk"  '(kill-this-buffer :which-key "kill buffer")
+    "bd"  '(kill-this-buffer :which-key "delete buffer")
+    "bn"  '(next-buffer :which-key "next buffer")
+    "bp"  '(previous-buffer :which-key "previous buffer")
+    "br"  '(rename-buffer :which-key "rename buffer")
+    "bs"  '(save-buffer :which-key "save buffer")
+    "bl"  '(list-buffers :which-key "list buffers")
+    "bx"  '(kill-buffer-and-window :which-key "kill buffer & window")
+
+    ;; Windows
+    "w"   '(:ignore t :which-key "windows")
+    "ws"  '(split-window-below :which-key "split below")
+    "wv"  '(split-window-right :which-key "split right")
+    "wd"  '(delete-window :which-key "delete window")
+    "wo"  '(delete-other-windows :which-key "only this window")
+    "wm"  '(delete-other-windows :which-key "maximize window")
+    "wc"  '(delete-window :which-key "close window")
+    "wh"  '(windmove-left :which-key "← window")
+    "wj"  '(windmove-down :which-key "↓ window")
+    "wk"  '(windmove-up :which-key "↑ window")
+    "wl"  '(windmove-right :which-key "→ window")
     ;; Magit
     "g"   '(:ignore t :which-key "git")
     "gs"  '(magit-status :which-key "status")
@@ -247,3 +246,27 @@
     "gl"  '(magit-log :which-key "log")
     "gb"  '(magit-branch :which-key "branch")
     "gg"  '(magit :which-key "branch")
+
+    ;; Terminal
+    "ot"  '(my/open-vterm-below :which-key "terminal")
+
+    "TAB"  '(:ignore t :which-key "workspace")
+    "TAB TAB" '(eyebrowse-last-window-config :which-key "last workspace")
+    "TAB n"   '(eyebrowse-create-window-config :which-key "new workspace")
+    "TAB d"   '(eyebrowse-close-window-config :which-key "delete workspace")
+    "TAB r"   '(eyebrowse-rename-window-config :which-key "rename workspace")
+    "TAB 0"   '(eyebrowse-switch-to-window-config-0 :which-key "workspace 0")
+    "TAB 1"   '(eyebrowse-switch-to-window-config-1 :which-key "workspace 1")
+    "TAB 2"   '(eyebrowse-switch-to-window-config-2 :which-key "workspace 2")
+    "TAB 3"   '(eyebrowse-switch-to-window-config-3 :which-key "workspace 3")
+    "TAB 4"   '(eyebrowse-switch-to-window-config-4 :which-key "workspace 4")
+    "TAB 5"   '(eyebrowse-switch-to-window-config-5 :which-key "workspace 5")
+    "TAB 6"   '(eyebrowse-switch-to-window-config-6 :which-key "workspace 6")
+    "TAB 7"   '(eyebrowse-switch-to-window-config-7 :which-key "workspace 7")
+    "TAB 8"   '(eyebrowse-switch-to-window-config-8 :which-key "workspace 8")
+    "TAB 9"   '(eyebrowse-switch-to-window-config-9 :which-key "workspace 9")
+
+    ;; Quit
+    "q"   '(:ignore t :which-key "quit")
+    "qq"  '(save-buffers-kill-terminal :which-key "quit emacs"))
+#+END_SRC

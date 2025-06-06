@@ -1,145 +1,145 @@
 * Setup Package
 #+BEGIN_SRC emacs-lisp
-;; Disable signature checking early to avoid compat.tar.sig errors
-(setq package-check-signature nil)
+  ;; Disable signature checking early to avoid compat.tar.sig errors
+  (setq package-check-signature nil)
 
-(require 'package)
-(setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
-        ("gnu"   . "https://elpa.gnu.org/packages/")))
+  (require 'package)
+  (setq package-archives
+	'(("melpa" . "https://melpa.org/packages/")
+	  ("gnu"   . "https://elpa.gnu.org/packages/")))
 
-(package-initialize)
+  (package-initialize)
 
-(unless package-archive-contents
-  (package-refresh-contents))
+  (unless package-archive-contents
+    (package-refresh-contents))
 
-(unless (package-installed-p 'gnu-elpa-keyring-update)
-  (package-install 'gnu-elpa-keyring-update))
+  (unless (package-installed-p 'gnu-elpa-keyring-update)
+    (package-install 'gnu-elpa-keyring-update))
 
-(gnu-elpa-keyring-update)
+  (gnu-elpa-keyring-update)
 #+END_SRC
 * UI Tweaks
-
 #+BEGIN_SRC emacs-lisp
-;; Disable the menu bar
-(menu-bar-mode -1)
+  ;; Disable the menu bar
+  (menu-bar-mode -1)
 
-;; Disable the tool bar
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode -1))
+  ;; Disable the tool bar
+  (when (fboundp 'tool-bar-mode)
+    (tool-bar-mode -1))
 
-;; Disable the scroll bar
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode -1))
+  ;; Disable the scroll bar
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1))
 
-;; Optional: Disable startup screen
-(setq inhibit-startup-screen t)
+  ;; Optional: Disable startup screen
+  ;; (setq inhibit-startup-screen t)
 #+END_SRC
 
 * Disable Startup Screen and Bell
 #+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-message t)
-(setq initial-scratch-message nil)
-(setq ring-bell-function 'ignore)
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+  (setq ring-bell-function 'ignore)
 #+END_SRC
 
 * Vertico
 #+BEGIN_SRC emacs-lisp
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode))
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode))
 
-(with-eval-after-load 'vertico
-  (define-key vertico-map (kbd "<escape>") #'abort-recursive-edit)
-  (define-key vertico-map (kbd "C-j") #'vertico-next)
-  (define-key vertico-map (kbd "C-k") #'vertico-previous))
+  (with-eval-after-load 'vertico
+    (define-key vertico-map (kbd "<escape>") #'abort-recursive-edit)
+    (define-key vertico-map (kbd "C-j") #'vertico-next)
+    (define-key vertico-map (kbd "C-k") #'vertico-previous))
 
-(use-package consult
-  :ensure t)
+  (use-package consult
+    :ensure t)
 
-(use-package marginalia
-  :ensure t
-  :init
-  (marginalia-mode))
+  (use-package marginalia
+    :ensure t
+    :init
+    (marginalia-mode))
 #+END_SRC
 
 * Install Doom Theme
 #+BEGIN_SRC emacs-lisp
-(unless (package-installed-p 'doom-themes)
-  (package-install 'doom-themes))
-(load-theme 'doom-one t)
-(require 'doom-themes)
-(doom-themes-org-config)
+  (unless (package-installed-p 'doom-themes)
+    (package-install 'doom-themes))
+  (load-theme 'doom-one t)
+  (require 'doom-themes)
+  (doom-themes-org-config)
 #+END_SRC
 
 * Evil, General, and Which-Key
 #+BEGIN_SRC emacs-lisp
-(unless (package-installed-p 'evil)
-  (package-install 'evil))
-(require 'evil)
-(evil-mode 1)
+    (unless (package-installed-p 'evil)
+      (package-install 'evil))
+    (require 'evil)
+    (evil-mode 1)
 
-(unless (package-installed-p 'general)
-  (package-install 'general))
-(require 'general)
+    (unless (package-installed-p 'general)
+      (package-install 'general))
+    (require 'general)
 
-(unless (package-installed-p 'which-key)
-  (package-install 'which-key))
-(which-key-mode)
+    (unless (package-installed-p 'which-key)
+      (package-install 'which-key))
+    (which-key-mode)
 #+END_SRC
+
 * Vterm Integration
-
 #+BEGIN_SRC emacs-lisp
-;; Install and require vterm
-(unless (package-installed-p 'vterm)
-  (package-refresh-contents)
-  (package-install 'vterm))
-(require 'vterm)
+  ;; Install and require vterm
+  (unless (package-installed-p 'vterm)
+    (package-refresh-contents)
+    (package-install 'vterm))
+  (require 'vterm)
 
-;; Set your preferred shell (optional if your SHELL env is already set)
-(setq vterm-shell "/bin/bash") ;; or "/usr/bin/zsh" or "fish"
+  ;; Preferred shell
+  (setq vterm-shell "/bin/bash")
 
-;; Optional: Start in insert mode if using Evil
-(when (bound-and-true-p evil-mode)
-  (add-hook 'vterm-mode-hook #'evil-insert-state))
+  ;; Always start in insert mode if using Evil
+  (add-hook 'vterm-mode-hook #'evil-insert-state)
 
-;; Optional: Close buffer on exit
-(setq vterm-kill-buffer-on-exit t)
+  ;; Automatically kill buffer when exiting shell
+  (setq vterm-kill-buffer-on-exit t)
 
-;; Optional: Don't let evil override vterm
-;; (with-eval-after-load 'evil
-  ;; (add-to-list 'evil-emacs-state-modes 'vterm-mode))
+  ;; Open vterm in horizontal split below
+  (defun my/open-vterm-below ()
+    "Open vterm in a horizontal split below with a max height of 18 rows."
+    (interactive)
+    (let* ((buf (get-buffer "*vterm*"))
+	   (total-height (window-total-height))
+	   (split-height (max 4 (- total-height 18)))
+	   (win (split-window nil split-height 'below)))
+      (select-window win)
+      (if buf
+	  (switch-to-buffer buf)
+	(vterm))))
 
-;; Function to open vterm in a horizontal split below
-(defun my/open-vterm-below ()
-  "Open vterm in a horizontal split below with a max height of 18 rows."
-  (interactive)
-  (let* ((buf (get-buffer "*vterm*"))
-         (total-height (window-total-height))
-         (split-height (max 4 (- total-height 18))) ;; ensure top window gets at least 4 rows
-         (win (split-window nil split-height 'below)))
-    (select-window win)
-    (if buf
-        (switch-to-buffer buf)
-      (vterm))))
+  (unless (package-installed-p 'evil-collection)
+    (package-install 'evil-collection))
+
+  (require 'evil-collection)
+  (evil-collection-init 'vterm)
 #+END_SRC
 
 * Install general.el for Doom-style keybindings
 #+BEGIN_SRC emacs-lisp
-(unless (package-installed-p 'general)
-  (package-install 'general))
+  (unless (package-installed-p 'general)
+    (package-install 'general))
 
-(require 'general)
+  (require 'general)
 #+END_SRC
 
 * Org
 #+BEGIN_SRC emacs-lisp
-(unless (package-installed-p 'org)
-  (package-install 'org))
-(require 'org)
+  (unless (package-installed-p 'org)
+    (package-install 'org))
+  (require 'org)
 #+END_SRC
-* Doom-style Leader Key
+
 * Magit
 #+BEGIN_SRC emacs-lisp
   (use-package magit

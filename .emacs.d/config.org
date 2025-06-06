@@ -234,6 +234,10 @@
   "bl"  '(list-buffers :which-key "list buffers")
   "bx"  '(kill-buffer-and-window :which-key "kill buffer & window")
   )
+  (global-set-key (kbd "C-/") 'comment-line)
+  (global-set-key (kbd "C-=") 'text-scale-increase)
+  (global-set-key (kbd "C-+") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
 #+END_SRC
 
     ;; Magit

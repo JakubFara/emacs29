@@ -87,6 +87,7 @@
 
 * Evil, General, and Which-Key
 #+BEGIN_SRC emacs-lisp
+    (setq evil-want-keybinding nil)
     (unless (package-installed-p 'evil)
       (package-install 'evil))
     (require 'evil)
@@ -99,6 +100,13 @@
     (unless (package-installed-p 'which-key)
       (package-install 'which-key))
     (which-key-mode)
+
+    (unless (package-installed-p 'evil-collection)
+      (package-refresh-contents)
+      (package-install 'evil-collection))
+
+    (require 'evil-collection)
+    (evil-collection-init) ;; Optional: restrict to just 'vterm with (evil-collection-init 'vterm)
 #+END_SRC
 
 * Vterm Integration

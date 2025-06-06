@@ -140,6 +140,29 @@
 (require 'org)
 #+END_SRC
 * Doom-style Leader Key
+* Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :defer t
+    :config
+    ;; Force Magit to open in the current window
+    (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+END_SRC
+
+* Eyebrowse
+#+BEGIN_SRC emacs-lisp
+  (use-package eyebrowse
+    :ensure t
+    :config
+    (eyebrowse-mode t)
+    ;; Optional: Doom-style slot names in the modeline
+    (setq eyebrowse-new-workspace t
+	  eyebrowse-wrap-around t
+	  eyebrowse-mode-line-style 'smart))
+#+END_SRC
+
+* My Keybindings
 #+BEGIN_SRC emacs-lisp
 ;; Ensure required packages are loaded
 (require 'general)
@@ -192,3 +215,10 @@
   )
 #+END_SRC
 
+    ;; Magit
+    "g"   '(:ignore t :which-key "git")
+    "gs"  '(magit-status :which-key "status")
+    "gc"  '(magit-commit :which-key "commit")
+    "gl"  '(magit-log :which-key "log")
+    "gb"  '(magit-branch :which-key "branch")
+    "gg"  '(magit :which-key "branch")

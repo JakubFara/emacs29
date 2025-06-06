@@ -61,6 +61,19 @@
     :ensure t
     :init
     (marginalia-mode))
+  (defun my/minibuffer-delete-full-dir-segment ()
+    "Delete the last full directory segment from the minibuffer input."
+    (interactive)
+    (let* ((input (minibuffer-contents))
+	   (prompt-end (minibuffer-prompt-end))
+	   (path (buffer-substring-no-properties prompt-end (point-max)))
+	   (path (directory-file-name path)) ;; remove trailing slash
+	   (parent (file-name-directory path)))
+      (when parent
+	(delete-region prompt-end (point-max))
+	(insert parent))))
+  (with-eval-after-load 'vertico
+    (define-key vertico-map (kbd "DEL") #'my/minibuffer-delete-full-dir-segment))
 #+END_SRC
 
 * Install Doom Theme

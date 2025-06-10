@@ -17,6 +17,8 @@
     (package-install 'gnu-elpa-keyring-update))
 
   (gnu-elpa-keyring-update)
+  (defvar my/vterm-workspace-table (make-hash-table :test 'equal)
+    "Hash table mapping Eyebrowse workspace slots to their vterm buffers.")
 #+END_SRC
 * UI Tweaks
 #+BEGIN_SRC emacs-lisp
@@ -128,16 +130,29 @@
 
   ;; Open vterm in horizontal split below
   (defun my/open-vterm-below ()
-    "Open vterm in a horizontal split below with a max height of 18 rows."
+    "Open a full-width vterm in the bottom window of the current Eyebrowse workspace.
+  If the workspace already has one, reuse it."
     (interactive)
-    (let* ((buf (get-buffer "*vterm*"))
-	   (total-height (window-total-height))
-	   (split-height (max 4 (- total-height 18)))
-	   (win (split-window nil split-height 'below)))
-      (select-window win)
-      (if buf
-	  (switch-to-buffer buf)
-	(vterm))))
+    (let* ((slot (eyebrowse--get 'current-slot))
+	   (existing-buf (gethash slot my/vterm-workspace-table))
+	   (vterm-buf (if (and existing-buf (buffer-live-p existing-buf))
+			  existing-buf
+			(let ((buf (vterm (generate-new-buffer-name (format "*vterm-%d*" slot)))))
+			  (puthash slot buf my/vterm-workspace-table)
+			  buf)))
+	   ;; Select the bottom-most window spanning full width
+	   (bottom-window (split-window (frame-root-window) -18 'below)))
+      (select-window bottom-window)
+      (switch-to-buffer vterm-buf)))
+
+  (defun my/vterm-remove-dead-buffer ()
+    "Remove dead vterm buffer from the workspace table."
+    (let ((slot (eyebrowse--get 'current-slot)))
+      (when (and (gethash slot my/vterm-workspace-table)
+		 (eq (gethash slot my/vterm-workspace-table) (current-buffer)))
+	(remhash slot my/vterm-workspace-table))))
+
+  (add-hook 'kill-buffer-hook #'my/vterm-remove-dead-buffer)
 
   (unless (package-installed-p 'evil-collection)
     (package-install 'evil-collection))

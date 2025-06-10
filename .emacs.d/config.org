@@ -210,6 +210,17 @@
 	  eyebrowse-mode-line-style 'smart))
 #+END_SRC
 
+* Clang-Format
+#+BEGIN_SRC emacs-lisp
+  (use-package clang-format
+    :ensure t)
+  (global-set-key (kbd "C-M-\\") 'clang-format-region)
+
+  (defun my-c++-mode-hook ()
+    (add-hook 'before-save-hook #'clang-format-buffer nil t))
+  (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+#+END_SRC
+
 * My Keybindings
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-/") 'comment-line)

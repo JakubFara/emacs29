@@ -223,7 +223,23 @@
 
 * My Keybindings
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-/") 'comment-line)
+  (defun my/comment-line-dwim ()
+    "Comment or uncomment current line or lines in region without including extra line."
+    (interactive)
+    (let ((beg (line-beginning-position))
+	  (end (line-end-position)))
+      (if (use-region-p)
+	  (setq beg (save-excursion (goto-char (region-beginning)) (line-beginning-position))
+		end (save-excursion (goto-char (region-end))
+				    (if (bolp)
+					(line-beginning-position)
+				      (line-end-position))))
+	(setq beg (line-beginning-position)
+	      end (line-end-position)))
+      (comment-or-uncomment-region beg end)))
+
+  (global-set-key (kbd "C-/") 'my/comment-line-dwim)
+  ;; (global-set-key (kbd "C-/") 'comment-dwim)
   (global-set-key (kbd "C-=") 'text-scale-increase)
   (global-set-key (kbd "C-+") 'text-scale-increase)
   (global-set-key (kbd "C--") 'text-scale-decrease)

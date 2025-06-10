@@ -75,7 +75,7 @@
 	(delete-region prompt-end (point-max))
 	(insert parent))))
   (with-eval-after-load 'vertico
-    (define-key vertico-map (kbd "DEL") #'my/minibuffer-delete-full-dir-segment))
+    (define-key vertico-map (kbd "C-h") #'my/minibuffer-delete-full-dir-segment))
 #+END_SRC
 
 * Install Doom Theme

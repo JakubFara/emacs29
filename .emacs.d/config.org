@@ -182,8 +182,20 @@
     :ensure t
     :defer t
     :config
-    ;; Force Magit to open in the current window
-    (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+    ;; Require ediff integration
+    (require 'magit-ediff)
+
+    ;; Open Magit buffers in a left-side window
+    (setq magit-display-buffer-function
+	  (lambda (buffer)
+	    (let ((window (display-buffer-in-side-window
+			   buffer '((side . left)
+				    (slot . 0)
+				    (window-width . 0.4)))))
+	      window)))
+
+    ;; Evil keybinding for magit refresh
+    (evil-define-key 'normal magit-mode-map (kbd "g z") #'magit-refresh))
 #+END_SRC
 
 * Eyebrowse
